@@ -237,26 +237,30 @@ export function initHero(canvas, { videoSrc, poster, portrait }) {
   }));
   scene.add(motes);
 
-  // poster first, then swap to the live video as soon as it plays
-  new TextureLoader().load(poster, (t) => {
-    if (!uniforms.uTex.value) { uniforms.uTex.value = t; uniforms.uTexRes.value.set(t.image.width, t.image.height); }
-  });
+  // `ready` = first texture actually drawn (poster or video, whichever comes first),
+  // so the page never waits for the video and the canvas is never shown black.
+  let firstDrawn;
+  const ready = new Promise((r) => { firstDrawn = r; });
+  const setTex = (tex, w, h) => {
+    uniforms.uTex.value = tex;
+    uniforms.uTexRes.value.set(w, h);
+    requestAnimationFrame(() => requestAnimationFrame(firstDrawn));
+  };
+  new TextureLoader().load(poster, (t) => { if (!uniforms.uTex.value) setTex(t, t.image.width, t.image.height); });
+
+  // video swaps in silently when it plays
   const video = document.createElement('video');
   Object.assign(video, { muted: true, loop: true, playsInline: true, autoplay: true, preload: 'auto', crossOrigin: 'anonymous' });
   video.setAttribute('muted', '');
   video.setAttribute('playsinline', ''); // iOS needs the attribute, not just the property
   const ext = video.canPlayType('video/webm; codecs="vp9"') ? 'webm' : 'mp4';
   video.src = `${videoSrc}.${ext}`;
-  const ready = new Promise((res) => {
-    video.addEventListener('playing', () => {
-      const vt = new VideoTexture(video);
-      vt.minFilter = vt.magFilter = LinearFilter;
-      uniforms.uTex.value = vt;
-      uniforms.uTexRes.value.set(video.videoWidth, video.videoHeight);
-      res();
-    }, { once: true });
-    video.play().catch(() => res()); // autoplay blocked → poster stays
-  });
+  video.addEventListener('playing', () => {
+    const vt = new VideoTexture(video);
+    vt.minFilter = vt.magFilter = LinearFilter;
+    setTex(vt, video.videoWidth, video.videoHeight);
+  }, { once: true });
+  video.play().catch(() => {}); // autoplay blocked (low-power mode) → poster stays
 
   const mouse = new Vector2(), mouseT = new Vector2();
   window.addEventListener('pointermove', (e) => {

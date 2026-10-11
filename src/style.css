@@ -225,7 +225,47 @@ html:not(.has-gl) .hero__window-copy .display em { color: var(--sand); }
 /* ---------- footer ---------- */
 .footer { background: var(--fern); color: var(--cream); padding-top: var(--s7); overflow: hidden; }
 .footer .display { max-width: 11ch; }
-.footer__cta { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s5); }
+
+/* ---------- direct booking ---------- */
+.book { display: grid; gap: var(--s5); align-items: start; }
+@media (min-width: 1000px) { .book { grid-template-columns: 1fr minmax(380px, 520px); gap: var(--s6); } }
+.book__price { margin: var(--s4) 0 var(--s3); display: flex; align-items: baseline; gap: .4em; color: color-mix(in srgb, var(--cream) 75%, transparent); }
+.book__price strong { font: 300 clamp(3rem, 2rem + 3vw, 4.5rem)/1 var(--serif); color: var(--cream); }
+.book__perks { list-style: none; padding: 0; margin: 0 0 var(--s4); display: grid; gap: .6rem; font-size: var(--fs-sm); }
+.book__perks li { display: flex; gap: .7em; align-items: baseline; }
+.book__perks li::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--sand); transform: translateY(-2px); }
+.book__rates { margin: 0; display: grid; gap: 0; max-width: 26rem; border-top: 1px solid color-mix(in srgb, var(--cream) 18%, transparent); }
+.book__rates div { display: flex; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid color-mix(in srgb, var(--cream) 18%, transparent); font-size: var(--fs-sm); }
+.book__rates dt { color: color-mix(in srgb, var(--cream) 70%, transparent); }
+.book__rates dd { margin: 0; }
+
+.book__form { background: var(--paper); color: var(--ink); border-radius: 4px; padding: clamp(1.25rem, 3vw, 2.5rem); box-shadow: 0 30px 80px rgb(0 0 0 / .25); }
+.book__step { display: grid; gap: var(--s2); }
+.book__step[hidden] { display: none; }
+.field-row { display: grid; gap: var(--s2); }
+@media (min-width: 480px) { .field-row { grid-template-columns: 1fr 1fr; } }
+.field { display: grid; gap: .35rem; min-width: 0; }
+.field > span { font: 600 .68rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--sage); }
+.field small { text-transform: none; letter-spacing: 0; font-weight: 500; color: color-mix(in srgb, var(--ink) 55%, transparent); }
+.field input, .field select {
+  width: 100%; min-height: 48px; padding: 0 .9rem; border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--fern) 22%, transparent); background: #fff; color: var(--ink);
+  font: 500 16px/1.2 var(--sans); /* 16px: no iOS zoom on focus */
+  -webkit-appearance: none; appearance: none;
+}
+.field select { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235c6e54' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right .9rem center; }
+.field input:focus, .field select:focus { outline: 2px solid var(--sand); outline-offset: 1px; border-color: transparent; }
+.book__sum { border-top: 1px solid color-mix(in srgb, var(--fern) 14%, transparent); padding-top: var(--s2); margin-top: .25rem; }
+.book__line { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); margin: 0; font-size: var(--fs-sm); }
+.book__line strong { font: 400 2rem/1 var(--serif); color: var(--fern); }
+.book__err { margin: .4rem 0 0; min-height: 1.2em; font-size: var(--fs-sm); color: var(--flower); }
+.book__btn { width: 100%; justify-content: center; min-height: 54px; background: var(--fern); color: var(--cream); font-size: .8rem; }
+.book__btn:hover { background: var(--sage); }
+.book__note { margin: 0; font-size: .8rem; text-align: center; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+.book__done { text-align: center; padding-block: var(--s4); justify-items: center; }
+.book__done .display { font-size: 3.5rem; }
+.book__done .display em { color: var(--brass); }
+.book__done .pill--ghost { color: var(--fern); border-color: color-mix(in srgb, var(--fern) 40%, transparent); }
 .footer__bottom {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3);
   margin-top: var(--s6); padding-block: var(--s4); border-top: 1px solid color-mix(in srgb, var(--cream) 18%, transparent);
