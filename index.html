@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Botanic Exclusive Room · Pescara</title>
+  <meta name="description" content="Botanic Exclusive Room: una stanza tra design e natura in Via Roma 126, nel cuore pedonale di Pescara, a 300 metri dal mare." />
+  <meta name="theme-color" content="#18241a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2318241a'/%3E%3Cpath d='M32 54C32 38 21 30 13 27c11-2 17 5 19 11 2-13 8-22 19-27-6 10-9 21-9 32' fill='none' stroke='%23c9a67f' stroke-width='2.5'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap" />
+  <link rel="preload" as="image" href="/media/hero.webp" media="(min-width: 768px)" />
+  <link rel="preload" as="image" href="/media/hero-m.webp" media="(max-width: 767px)" />
+  <link rel="stylesheet" href="/src/style.css" />
+  <noscript><style>.loader { display: none; }</style></noscript>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" aria-hidden="true">
+    <svg class="loader__leaf" viewBox="0 0 64 64"><path d="M32 60C32 40 18 30 8 26c14-2 22 6 24 14 2-16 10-28 24-34-8 12-12 26-12 40" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+    <span class="loader__count">0</span>
+  </div>
+
+  <!-- Nav -->
+  <header class="nav">
+    <a href="#top" class="nav__brand" aria-label="Botanic Exclusive Room, torna su">
+      <span class="nav__word">Botanic</span>
+      <span class="nav__sub">Exclusive Room</span>
+    </a>
+    <nav class="nav__links" aria-label="Sezioni">
+      <a href="#stanza">La stanza</a>
+      <a href="#dettagli">Dettagli</a>
+      <a href="#pescara">Pescara</a>
+      <a href="#ospiti">Ospiti</a>
+    </nav>
+    <a href="#prenota" class="pill pill--light">Prenota</a>
+  </header>
+
+  <main id="top">
+    <!-- HERO: WebGL video of Pescara, scroll morphs it into the balcony window -->
+    <section class="hero" aria-label="Pescara">
+      <div class="hero__sticky">
+        <canvas class="hero__gl" aria-hidden="true"></canvas>
+        <img class="hero__fallback" src="/media/hero.webp" alt="Il Ponte del Mare di Pescara al tramonto, visto tra le foglie di palma" />
+        <div class="hero__copy">
+          <p class="eyebrow">Via Roma 126 · Pescara</p>
+          <h1 class="hero__title">
+            <span class="line"><span>Pescara,</span></span>
+            <span class="line"><em>dal verde al mare.</em></span>
+          </h1>
+          <p class="hero__lede">Una stanza tra design e natura, nel cuore pedonale della città.</p>
+        </div>
+        <div class="hero__window-copy">
+          <p class="eyebrow eyebrow--dark">01 · La vista</p>
+          <h2 class="display">Il mare <em>a trecento metri.</em></h2>
+          <p>Dal balcone, il centro. Tre minuti a piedi e sei sul lungomare.</p>
+        </div>
+        <div class="hero__scroll" aria-hidden="true"><span>Scorri</span><i></i></div>
+      </div>
+    </section>
+
+    <!-- LA STANZA -->
+    <section class="stanza" id="stanza">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--dark">02 · La stanza</p>
+        <h2 class="display reveal-words">Un rifugio di charme <em>tra natura e design.</em></h2>
+        <div class="stanza__grid">
+          <figure class="frame frame--tall" data-parallax>
+            <img src="/photos/ab2-800.webp" srcset="/photos/ab2-800.webp 800w, /photos/ab2-1600.webp 1440w" sizes="(min-width: 900px) 34vw, 90vw" alt="Foglie di filodendro davanti al letto con testiera imbottita" loading="lazy" width="1440" height="1920" />
+          </figure>
+          <div class="stanza__text">
+            <p class="lead">Carta da parati tropicale, luce calda, lino color sabbia. Ogni dettaglio è pensato per farti sentire a casa, solo un po' più in vacanza.</p>
+            <p>Appartamento ristrutturato, ad uso esclusivo, al primo piano con ascensore. Camera matrimoniale, angolo cottura attrezzato e balcone che guarda il centro.</p>
+          </div>
+          <figure class="frame frame--wide" data-parallax>
+            <img src="/photos/ab1-800.webp" srcset="/photos/ab1-800.webp 800w, /photos/ab1-1600.webp 1440w" sizes="(min-width: 900px) 56vw, 90vw" alt="La camera con murale di palme, letto matrimoniale e tende luminose" loading="lazy" width="1440" height="1080" />
+          </figure>
+        </div>
+        <ul class="stats">
+          <li><strong data-count="300">0</strong><span>metri dalla spiaggia</span></li>
+          <li><strong data-count="400">0</strong><span>metri dalla stazione</span></li>
+          <li><strong data-count="4.98" data-dec="2">0</strong><span>su Airbnb · Superhost</span></li>
+          <li><strong data-count="9.4" data-dec="1">0</strong><span>su Booking · 79 recensioni</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DETTAGLI: horizontal pinned track -->
+    <section class="dettagli" id="dettagli">
+      <div class="dettagli__pin">
+        <div class="dettagli__head">
+          <p class="eyebrow">03 · I dettagli</p>
+          <h2 class="display">Comfort, <em>stile e relax.</em></h2>
+        </div>
+        <div class="track">
+          <figure class="card">
+            <img src="/photos/ab3-800.webp" alt="Letto matrimoniale con cuscini color sabbia e lampade da parete" loading="lazy" width="800" height="1067" />
+            <figcaption><span>01</span>Letto matrimoniale, quattro cuscini a scelta</figcaption>
+          </figure>
+          <figure class="card">
+            <img src="/photos/ab5-800.webp" alt="Scrivania con sedie in velluto verde e una bottiglia di benvenuto" loading="lazy" width="800" height="1067" />
+            <figcaption><span>02</span>Postazione di lavoro e Wi-Fi da 756 Mbps</figcaption>
+          </figure>
+          <figure class="card">
+            <img src="/photos/ab4-800.webp" alt="Cactus in ceramica con fiore rosso davanti al letto" loading="lazy" width="800" height="1067" />
+            <figcaption><span>03</span>Aria condizionata e smart TV 43"</figcaption>
+          </figure>
+          <figure class="card">
+            <img src="/photos/bk2-800.webp" alt="Vista della camera con murale di palme" loading="lazy" width="576" height="768" />
+            <figcaption><span>04</span>Self check-in con tastierino</figcaption>
+          </figure>
+          <figure class="card card--note">
+            <p class="display"><span><em>Un benvenuto</em> in frigo, caffè e snack in dispensa.</span></p>
+            <figcaption><span>05</span>Angolo cottura completo</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESCARA -->
+    <section class="citta" id="pescara">
+      <div class="citta__media">
+        <div class="citta__video">
+          <img src="/media/nave-sm.webp" srcset="/media/nave-sm.webp 900w, /media/nave.webp 1920w" sizes="100vw" alt="La Nave di Pietro Cascella, fontana in marmo di Carrara sul lungomare di Pescara, al tramonto" loading="lazy" width="1920" height="1086" />
+          <canvas aria-hidden="true"></canvas>
+        </div>
+        <div class="citta__veil"></div>
+        <div class="citta__copy">
+          <p class="eyebrow">04 · Pescara</p>
+          <h2 class="display display--xl reveal-words">La città <em>a passo lento.</em></h2>
+        </div>
+      </div>
+      <div class="wrap citta__place">
+        <div class="citta__intro">
+          <p class="lead">Via Roma corre parallela a Corso Umberto I, la via dello shopping, e sfocia in Piazza della Rinascita. Boutique, ristoranti e locali sotto casa, il mare in fondo alla strada.</p>
+          <figure class="frame frame--video">
+            <video data-src="/media/centro" poster="/media/centro.webp" muted loop playsinline preload="none" aria-label="Il centro pedonale di Pescara visto dall'alto verso il mare"></video>
+          </figure>
+        </div>
+        <ol class="places">
+          <li><span>Corso Umberto I</span><em>1 min a piedi</em></li>
+          <li><span>Piazza Salotto</span><em>5 min a piedi</em></li>
+          <li><span>Spiaggia e lungomare</span><em>4 min a piedi</em></li>
+          <li><span>Stazione centrale</span><em>6 min a piedi</em></li>
+          <li><span>Casa di D'Annunzio</span><em>18 min a piedi</em></li>
+          <li><span>Ponte del Mare</span><em>19 min a piedi</em></li>
+          <li><span>Aeroporto d'Abruzzo</span><em>10 min in auto</em></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- OSPITI -->
+    <section class="ospiti" id="ospiti">
+      <p class="eyebrow eyebrow--dark wrap">05 · Dicono di noi</p>
+      <div class="marquee" aria-label="Recensioni degli ospiti">
+        <div class="marquee__row">
+          <blockquote>“La posizione è perfetta.” <cite>Ervin</cite></blockquote>
+          <blockquote>“Una delle migliori in cui abbiamo soggiornato.” <cite>John</cite></blockquote>
+          <blockquote>“Il mio terzo soggiorno in questa bellissima stanza.” <cite>Alison</cite></blockquote>
+          <blockquote>“Pulitissima e confortevole.” <cite>Mona</cite></blockquote>
+          <blockquote>“Una bellissima sorpresa in frigo.” <cite>Magdalena</cite></blockquote>
+        </div>
+      </div>
+      <div class="wrap ospiti__badges">
+        <p><strong>4.98</strong> Airbnb · Guest favorite · top 5%</p>
+        <p><strong>9.4</strong> Booking · Eccezionale</p>
+      </div>
+    </section>
+
+    <!-- CTA + FOOTER -->
+    <footer class="footer" id="prenota">
+      <div class="wrap">
+        <p class="eyebrow">Prenota il tuo soggiorno</p>
+        <h2 class="display display--xl">Ti aspettiamo <em>a Pescara.</em></h2>
+        <div class="footer__cta">
+          <a class="pill pill--light" href="https://www.airbnb.com/rooms/1175446482105000427" target="_blank" rel="noopener">Prenota su Airbnb ↗</a>
+          <a class="pill pill--ghost" href="https://www.booking.com/hotel/it/botanic-exclusive-room.html" target="_blank" rel="noopener">Prenota su Booking ↗</a>
+        </div>
+        <div class="footer__bottom">
+          <address>Via Roma 126, 65122 Pescara</address>
+          <ul class="social" aria-label="Social">
+            <li><a href="https://www.instagram.com/botanicexclusiveroom/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>
+              Instagram</a></li>
+            <li><a href="https://www.airbnb.com/rooms/1175446482105000427" target="_blank" rel="noopener">Airbnb</a></li>
+            <li><a href="https://www.booking.com/hotel/it/botanic-exclusive-room.html" target="_blank" rel="noopener">Booking</a></li>
+          </ul>
+        </div>
+        <div class="footer__mark" aria-hidden="true">
+          <p class="footer__word">Botanic</p>
+          <p class="footer__tag">Exclusive Room · Pescara</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
