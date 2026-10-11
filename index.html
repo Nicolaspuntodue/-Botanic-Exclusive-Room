@@ -12,8 +12,9 @@
   <!-- fonts load without blocking first paint (display=swap + print-media trick) -->
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Manrope:wght@400;500;600&display=swap" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Manrope:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
-  <link rel="preload" as="image" href="/media/hero.webp" media="(min-aspect-ratio: 9/10)" fetchpriority="high" />
-  <link rel="preload" as="image" href="/media/hero-m.webp" media="(max-aspect-ratio: 9/10)" fetchpriority="high" />
+  <!-- crossorigin on preloads AND the <img>: same request mode as three.js' TextureLoader, so each file is fetched once -->
+  <link rel="preload" as="image" href="/media/hero.webp" fetchpriority="high" crossorigin="anonymous" />
+  <link rel="preload" as="image" href="/media/hero-mask.webp" crossorigin="anonymous" />
   <link rel="stylesheet" href="/src/style.css" />
   <noscript><style>.loader { display: none; }</style></noscript>
 </head>
@@ -44,10 +45,7 @@
     <section class="hero" aria-label="Pescara">
       <div class="hero__sticky">
         <canvas class="hero__gl" aria-hidden="true"></canvas>
-        <picture>
-          <source media="(max-aspect-ratio: 9/10)" srcset="/media/hero-m.webp" />
-          <img class="hero__fallback" src="/media/hero.webp" alt="Il Ponte del Mare di Pescara al tramonto, visto tra le foglie di palma" fetchpriority="high" decoding="async" />
-        </picture>
+        <img class="hero__fallback" src="/media/hero.webp" alt="Il Ponte del Mare di Pescara al tramonto, visto tra le foglie di palma" fetchpriority="high" decoding="async" crossorigin="anonymous" />
         <div class="hero__copy">
           <p class="eyebrow">Via Roma 126 · Pescara</p>
           <h1 class="hero__title">

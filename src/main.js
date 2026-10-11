@@ -35,22 +35,38 @@ if (!reduced) {
 let gl = null;
 const glReady = import('./gl.js').then(({ initHero }) => {
   gl = initHero($('.hero__gl'), {
-    videoSrc: portrait ? '/media/hero-m' : '/media/hero',
-    poster: portrait ? '/media/hero-m.webp' : '/media/hero.webp',
+    src: '/media/hero.webp',      // same photo on every screen: the shader crops on the pylon
+    mask: '/media/hero-mask.webp',
+    sun: [0.99, 0.55],            // low sun, right edge (uv, y up)
+    focus: 0.64,                  // pylon x-position, used to centre narrow crops
     portrait,
   });
   // swap the <img> for the canvas only once the canvas has really drawn a frame
   return gl.ready.then(() => document.documentElement.classList.add('has-gl'));
 }).catch((err) => console.warn('WebGL unavailable, using static hero', err));
 
-/* ---------- loader: short, waits only for the poster frame (never the video) ---------- */
-const counter = { v: 0 };
+/* ---------- loader: one counter, always moving, always ends on 100 ----------
+   (two overlapping tweens used to fight: the slower "to 90" one could finish last and leave 90 on screen) */
 const minTime = new Promise((r) => setTimeout(r, 450));
-const ready = Promise.race([Promise.all([glReady, minTime]), new Promise((r) => setTimeout(r, 2200))]);
-const countTo = (v, d) => gsap.to(counter, { v, duration: d, ease: 'power2.out', onUpdate: () => { $('.loader__count').textContent = Math.round(counter.v); } });
-countTo(90, 0.7);
-ready.then(() => {
-  countTo(100, 0.2).then(() => {
+const ready = Promise.race([Promise.all([glReady, minTime]), new Promise((r) => setTimeout(r, 2500))]);
+const countEl = $('.loader__count');
+let shown = 0, loaded = false;
+const t0 = performance.now();
+ready.then(() => { loaded = true; });
+const loaderDone = new Promise((resolve) => {
+  const tick = () => {
+    const t = (performance.now() - t0) / 1000;
+    // while loading: ease towards 92 and keep creeping (never a hard stop); once loaded: glide to 100
+    const target = loaded ? 100 : 92 * (1 - Math.exp(-t / 0.6));
+    shown += (target - shown) * (loaded ? 0.18 : 0.1);
+    if (loaded && shown > 99.5) shown = 100;
+    countEl.textContent = Math.floor(shown);
+    if (shown === 100) { gsap.ticker.remove(tick); resolve(); }
+  };
+  gsap.ticker.add(tick);
+});
+loaderDone.then(() => {
+  {
     document.body.classList.remove('is-loading');
     ScrollTrigger.refresh(); // measure before the user can scroll, never mid-scroll
     lenis?.start(); // scrolling is allowed as soon as the curtain lifts
@@ -58,7 +74,7 @@ ready.then(() => {
     tl.to('.loader', { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'expo.inOut' })
       .from('.hero__title .line > *', { yPercent: 110, duration: 1.3, stagger: 0.12, ease: 'expo.out' }, '-=0.45')
       .from('.hero__copy .eyebrow, .hero__lede, .hero__scroll, .nav', { opacity: 0, y: 20, duration: 1, stagger: 0.08, ease: 'power3.out' }, '<0.3');
-  });
+  }
 });
 
 /* ---------- hero scroll: video folds into the balcony window ---------- */

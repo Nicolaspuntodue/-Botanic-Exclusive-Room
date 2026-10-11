@@ -1,10 +1,10 @@
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Mesh, PlaneGeometry, ShaderMaterial,
-  BufferGeometry, BufferAttribute, Points, AdditiveBlending, VideoTexture,
-  TextureLoader, Vector2, SRGBColorSpace, LinearFilter,
+  BufferGeometry, BufferAttribute, Points, AdditiveBlending,
+  TextureLoader, Vector2, SRGBColorSpace,
 } from 'three';
 
-// Hero: Pescara video as a full-screen shader that, on scroll, folds into an
+// Hero: living photo of the Ponte del Mare (water + palms animated by a mask) as a full-screen shader that, on scroll, folds into an
 // arched "balcony window" while 3D light motes rush past the camera.
 
 const screenVert = /* glsl */`
@@ -14,9 +14,9 @@ const screenVert = /* glsl */`
 
 const screenFrag = /* glsl */`
   precision highp float;
-  uniform sampler2D uTex;
-  uniform vec2 uRes, uTexRes, uMouse;
-  uniform float uProgress, uTime, uPortrait;
+  uniform sampler2D uTex, uMask; // mask: R = water, G = palm fronds
+  uniform vec2 uRes, uTexRes, uMouse, uSun;
+  uniform float uProgress, uTime, uPortrait, uFocus;
   varying vec2 vUv;
 
   float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -27,10 +27,12 @@ const screenFrag = /* glsl */`
     float top = length(p - vec2(0.0, h * 0.5 - w)) - w;
     return min(body, top);
   }
+  // cover-fit; when the screen is narrower than the photo, centre the crop on uFocus (the pylon)
   vec2 cover(vec2 uv, vec2 res, vec2 tex) {
     float rs = res.x / res.y, rt = tex.x / tex.y;
     vec2 s = rs > rt ? vec2(1.0, rt / rs) : vec2(rs / rt, 1.0);
-    return (uv - 0.5) * s + 0.5;
+    float cx = clamp(uFocus, s.x * 0.5, 1.0 - s.x * 0.5);
+    return vec2((uv.x - 0.5) * s.x + cx, (uv.y - 0.5) * s.y + 0.5);
   }
 
   void main() {
@@ -53,20 +55,41 @@ const screenFrag = /* glsl */`
     float d = sdArch(q, w1, h1) + sin(ang * 9.0 + uTime * 1.2) * 0.004 * m * (1.0 - m) * 4.0;
     float inside = 1.0 - smoothstep(-0.0015, 0.0015, d);
 
-    // video uv: slight zoom while the window closes + mouse parallax for depth
+    // photo uv: slight zoom while the window closes + mouse parallax for depth
     vec2 uv = cover(vUv, uRes, uTexRes);
     uv = (uv - 0.5) / (1.0 + 0.12 * e) + 0.5;
     uv += uMouse * (0.012 + 0.02 * e);
+
+    // living photo: ripples on the river/sea, palm fronds swaying in the breeze
+    float t = uTime;
+    vec2 mk = texture2D(uMask, uv).rg;
+    vec2 disp = vec2(
+      sin(uv.y * 140.0 + t * 1.6) * 0.6 + sin(uv.y * 230.0 - t * 2.1 + uv.x * 20.0) * 0.4,
+      sin(uv.x * 90.0 + t * 1.2 + uv.y * 60.0) * 0.35
+    ) * 0.0022 * mk.r;
+    disp += mk.g * vec2(
+      sin(t * 0.9 + uv.y * 4.0) * 0.006 + sin(t * 1.7 + uv.x * 9.0) * 0.002,
+      cos(t * 0.7 + uv.x * 3.0) * 0.004
+    );
+    uv += disp;
+
     float wobble = m * (1.0 - m) * 4.0;
-    uv += wobble * 0.012 * vec2(sin(uv.y * 12.0 + uTime), cos(uv.x * 10.0 + uTime * 0.8));
+    // gentle fold wobble: a realistic photo reads as "glitch" if this is strong
+    uv += wobble * 0.004 * vec2(sin(uv.y * 8.0 + uTime), cos(uv.x * 7.0 + uTime * 0.8));
 
     // tiny chromatic split during the fold
-    float ca = wobble * 0.004;
+    float ca = wobble * 0.0012;
     vec3 col = vec3(
       texture2D(uTex, uv + vec2(ca, 0.0)).r,
       texture2D(uTex, uv).g,
       texture2D(uTex, uv - vec2(ca, 0.0)).b
     );
+    // twinkling sun glints on the water + a breathing glow around the low sun
+    float lum = dot(col, vec3(0.3, 0.59, 0.11));
+    float glint = smoothstep(0.988, 1.0, hash(floor((uv + disp * 4.0) * vec2(420.0, 760.0)) + floor(t * 7.0)));
+    col += vec3(1.0, 0.86, 0.6) * glint * mk.r * smoothstep(0.45, 0.85, lum) * 0.7;
+    float rt = uTexRes.x / uTexRes.y;
+    col += vec3(1.0, 0.78, 0.5) * (0.06 + 0.02 * sin(t * 0.7)) * smoothstep(0.35, 0.0, distance(uv * vec2(rt, 1.0), uSun * vec2(rt, 1.0)));
 
     // legibility gradient under the hero copy, fades as we fold
     float shade = smoothstep(0.75, 0.0, vUv.y) * 0.45 * (1.0 - e);
@@ -190,7 +213,7 @@ export function initWater(canvas, { src, mask, sun }) {
   return { ready };
 }
 
-export function initHero(canvas, { videoSrc, poster, portrait }) {
+export function initHero(canvas, { src, mask, sun, focus, portrait }) {
   const renderer = new WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
   const dpr = Math.min(window.devicePixelRatio || 1, portrait ? 1.5 : 1.75);
   renderer.setPixelRatio(dpr);
@@ -202,9 +225,12 @@ export function initHero(canvas, { videoSrc, poster, portrait }) {
 
   const uniforms = {
     uTex: { value: null },
+    uMask: { value: null },
     uRes: { value: new Vector2(1, 1) },
     uTexRes: { value: new Vector2(16, 9) },
     uMouse: { value: new Vector2() },
+    uSun: { value: new Vector2(...sun) },
+    uFocus: { value: focus },
     uProgress: { value: 0 },
     uTime: { value: 0 },
     uPortrait: { value: portrait ? 1 : 0 },
@@ -237,30 +263,15 @@ export function initHero(canvas, { videoSrc, poster, portrait }) {
   }));
   scene.add(motes);
 
-  // `ready` = first texture actually drawn (poster or video, whichever comes first),
-  // so the page never waits for the video and the canvas is never shown black.
-  let firstDrawn;
-  const ready = new Promise((r) => { firstDrawn = r; });
-  const setTex = (tex, w, h) => {
+  // still photo + mask (no video): `ready` once both are loaded and a frame has been drawn,
+  // so the canvas is never shown black. If loading fails, `ready` never resolves and the <img> stays.
+  const loader = new TextureLoader();
+  const ready = Promise.all([loader.loadAsync(src), loader.loadAsync(mask)]).then(([tex, m]) => {
     uniforms.uTex.value = tex;
-    uniforms.uTexRes.value.set(w, h);
-    requestAnimationFrame(() => requestAnimationFrame(firstDrawn));
-  };
-  new TextureLoader().load(poster, (t) => { if (!uniforms.uTex.value) setTex(t, t.image.width, t.image.height); });
-
-  // video swaps in silently when it plays
-  const video = document.createElement('video');
-  Object.assign(video, { muted: true, loop: true, playsInline: true, autoplay: true, preload: 'auto', crossOrigin: 'anonymous' });
-  video.setAttribute('muted', '');
-  video.setAttribute('playsinline', ''); // iOS needs the attribute, not just the property
-  const ext = video.canPlayType('video/webm; codecs="vp9"') ? 'webm' : 'mp4';
-  video.src = `${videoSrc}.${ext}`;
-  video.addEventListener('playing', () => {
-    const vt = new VideoTexture(video);
-    vt.minFilter = vt.magFilter = LinearFilter;
-    setTex(vt, video.videoWidth, video.videoHeight);
-  }, { once: true });
-  video.play().catch(() => {}); // autoplay blocked (low-power mode) → poster stays
+    uniforms.uMask.value = m;
+    uniforms.uTexRes.value.set(tex.image.width, tex.image.height);
+    return new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  });
 
   const mouse = new Vector2(), mouseT = new Vector2();
   window.addEventListener('pointermove', (e) => {
@@ -299,7 +310,7 @@ export function initHero(canvas, { videoSrc, poster, portrait }) {
   const start = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } };
   new IntersectionObserver(([en]) => {
     visible = en.isIntersecting;
-    if (visible) { video.play().catch(() => {}); start(); } else video.pause();
+    if (visible) start();
   }).observe(canvas);
   document.addEventListener('visibilitychange', start);
   start();
